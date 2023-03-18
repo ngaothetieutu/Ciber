@@ -66,8 +66,7 @@ namespace Ciber.Services
         public async Task DeleteAsync(int id)
         {
             
-            var entity = await _itemRepository.GetByIdAsync(id);
-            await _itemRepository.DeleteAsync(entity);
+           await _itemRepository.DeleteAsync(c => c.Id == id,autoSave: true);
         }
         public async Task<OrderModel> GetAsync(int id)
         {

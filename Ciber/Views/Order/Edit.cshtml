@@ -1,0 +1,77 @@
+﻿@model Ciber.Models.OrderModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit Order</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" asp-route-id="@Model.Id">
+            <div class="form-group">
+                <input asp-for="Id" class="form-control" type="hidden"/>
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="OrderName" class="control-label"></label>
+                <input asp-for="OrderName" class="form-control" />
+                <span asp-validation-for="OrderName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ProductId" class="control-label">Product</label>
+                <select asp-for="ProductId" class="form-control" asp-items="@Model.ProductSelectListItems">
+                    <option>Please select one</option>
+                </select>
+                <span asp-validation-for="ProductId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <select asp-for="UserId" class="form-control" asp-items="@Model.CustomerSelectListItems">
+                    <option>Please select one</option>
+                </select>
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="OrderDate" class="control-label"></label>
+                <input asp-for="OrderDate" class="input-group date" id="datetimepicker" />
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+                <span asp-validation-for="OrderDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Amount" class="control-label"></label>
+                <input asp-for="Amount" class="form-control" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Edit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    @{
+        if (!String.IsNullOrEmpty(ViewBag.Message))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" id="danger-alert">
+                @ViewBag.Message
+            </div>
+        }
+    }
+    <a asp-action="Index">Back to List</a>
+</div>
+<script type="text/javascript">
+    
+</script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

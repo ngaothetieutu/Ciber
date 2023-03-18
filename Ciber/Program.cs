@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NetCore.AutoRegisterDi;
+using Serilog.Events;
+using Serilog;
 using System.Data;
 using System.Reflection;
 
@@ -84,6 +86,17 @@ builder.Services.RegisterAssemblyPublicNonGenericClasses()
    .Where(x => x.Name.EndsWith("AppService"))  //optional
    .AsPublicImplementedInterfaces(ServiceLifetime.Transient);
 
+Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
+                .Enrich.WithProperty("Application", "CiberApp")
+                .Enrich.FromLogContext()
+                .WriteTo.File("Logs/logs.txt")
+                .WriteTo.Console()
+                .CreateLogger();
+builder.Host.UseSerilog(Log.Logger);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -102,13 +115,20 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseSerilogRequestLogging();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
+    name: "areaRoute",
+    pattern: "{area:exists}/{controller}/{action}/{id?}");
+
+app.MapControllerRoute(
     name: "default",
-    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 app.UseMiddleware<DbTransactionMiddleware>();
+
+
 app.Run();

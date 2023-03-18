@@ -1,14 +1,19 @@
-﻿@model IEnumerable<Ciber.Models.OrderModel>
+﻿@using PagedList.Mvc;
+@using System.Web;
+@model PagedList.IPagedList<Ciber.Models.OrderModel>
 
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Danh sách Order</h1>
-
-<p>
-    <a  asp-action="Create">Create New</a>
-</p>
+@using (Html.BeginForm("Index", "Order", FormMethod.Get))
+{
+    <p>
+        Product Name: @Html.TextBox("searchString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Search" />
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -48,14 +53,18 @@
                 @Html.DisplayFor(modelItem => item.Amount)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new {  id=item.Id },
+                new { onclick = "return confirm('Bạn có chắc chắn muốn xóa Order này?');" })
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+<p class="float-right">
+    <a asp-action="Create">Create New</a>
+</p>
 @{
     if (!String.IsNullOrEmpty(ViewBag.Message))
     {
